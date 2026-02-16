@@ -107,7 +107,10 @@ pub fn collect_paths(root: impl AsRef<Path>) -> anyhow::Result<Vec<String>> {
             let rel = path.strip_prefix(root).unwrap();
             let mut rel_string = rel.to_string_lossy().replace('\\', "/");
 
-            if path.is_dir() {
+            let metadata = fs::symlink_metadata(&path)?;
+            let file_type = metadata.file_type();
+
+            if file_type.is_dir() {
                 rel_string.push('/');
                 acc.push(rel_string.clone());
                 visit_dir(&path, root, acc)?;
