@@ -1,7 +1,7 @@
 use clap::Parser;
 use helix_move_lib::{
     add_missing_directories, build_rules, create_edit_rules, filter_full_rules,
-    normalize_rules, EditRule,
+    format_editor_path, normalize_rules, EditRule,
 };
 use serde::Serialize;
 use std::collections::HashMap;
@@ -105,7 +105,7 @@ pub fn collect_paths(root: impl AsRef<Path>) -> anyhow::Result<Vec<String>> {
             let path = entry.path();
 
             let rel = path.strip_prefix(root).unwrap();
-            let mut rel_string = rel.to_string_lossy().replace('\\', "/");
+            let mut rel_string = format_editor_path(rel);
 
             let metadata = fs::symlink_metadata(&path)?;
             let file_type = metadata.file_type();
